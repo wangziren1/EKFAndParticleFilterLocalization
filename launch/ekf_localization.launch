@@ -1,0 +1,9 @@
+<launch>
+<node pkg="ekf_localization" type="ekf_localization_node"
+      name="ekf_localization_node"
+      args="-configuration_file $(find ekf_localization)/config/config.yaml
+            -map_file $(find ekf_localization)/map/map.yaml" 
+      output="screen"/>
+<node pkg="rviz" type="rviz" name="rviz" required="true"
+          args="-d $(find ekf_localization)/rviz/ekf_localization.rviz"/>
+</launch>

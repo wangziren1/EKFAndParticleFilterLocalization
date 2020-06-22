@@ -1,0 +1,8 @@
+show_image: true
+
+motion_model_covariance: [0.0001, 0, 0,
+                          0, 0.0001, 0,
+                          0, 0, 0.0001]
+
+measurement_model_covariance: [0.001, 0,
+                               0, 0.001]
