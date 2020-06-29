@@ -5,7 +5,6 @@
 #include <cv_bridge/cv_bridge.h>
 #include <tf2_ros/transform_listener.h>
 #include <yaml-cpp/yaml.h>
-#include <ostream>
 
 #include "marker_pose_estimator.h"
 #include "odometry.h"

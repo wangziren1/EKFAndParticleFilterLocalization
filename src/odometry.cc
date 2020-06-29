@@ -1,7 +1,8 @@
 #include "odometry.h"
 
 Odometry::Odometry() 
-    : first_(true), noise_mean_(0), noise_stddev_(0),
+    : first_(true), noise_mean_(0/*0.0005*/), 
+      noise_stddev_(0/*0.0002*/),
       seed_(std::chrono::system_clock::now().time_since_epoch().count()),
       generator_(seed_), distribution_(0, noise_stddev_), n_(0) {
   all_data_.reserve(5000);

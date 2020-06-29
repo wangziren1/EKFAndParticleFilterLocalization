@@ -1,0 +1,8 @@
+<launch>
+<node pkg="ekf_localization" type="ekf_slam_node"
+      name="ekf_slam_node"
+      args="-configuration_file $(find ekf_localization)/config/config.yaml" 
+      output="screen"/>
+<node pkg="rviz" type="rviz" name="rviz" required="true"
+          args="-d $(find ekf_localization)/rviz/ekf_slam.rviz"/>
+</launch>

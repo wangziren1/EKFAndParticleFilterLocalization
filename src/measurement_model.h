@@ -18,4 +18,18 @@ class MeasurementModel {
   Eigen::Matrix2f Q_;
 };
 
+class SlamMeasurementModel {
+ public:
+  SlamMeasurementModel(const YAML::Node& node);
+  
+  PredictMarkerPosition Predict(const State& state, int id);
+
+ private:
+  Eigen::Vector2f ComputeMean(const State& state, int id);
+
+  Eigen::MatrixXf ComputeJacobian(const State& state, int id);
+  
+  Eigen::Matrix2f Q_;
+};
+
 #endif

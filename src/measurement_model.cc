@@ -39,3 +39,49 @@ Eigen::Matrix<float, 2, 3> MeasurementModel::ComputeJacobian(
        sin_theta,  -cos_theta, -cos_theta*(mx-tx) - sin_theta*(my-ty);
   return H;
 }
+
+SlamMeasurementModel::SlamMeasurementModel(const YAML::Node& node) {
+  auto& covariance = node["measurement_model_covariance"];
+  for (int j = 0; j < 2; ++j) {
+    for (int i = 0; i < 2; ++i) {
+      Q_(j, i) = covariance[j*2+i].as<float>();
+    }
+  }
+  cout << "Q:\n" << Q_ << endl;
+}
+
+PredictMarkerPosition SlamMeasurementModel::Predict(const State& state, 
+                                                    int id) {
+  Eigen::Vector2f mu = ComputeMean(state, id);
+  Eigen::MatrixXf H = ComputeJacobian(state, id);
+  Eigen::Matrix2f sigma = H*state.sigma()*H.transpose() + Q_;
+  return PredictMarkerPosition{id, mu, sigma, H};
+}
+
+Eigen::Vector2f SlamMeasurementModel::ComputeMean(const State& state, int id) {
+  Rigid2f base_footprint_to_map(state.transform());
+  Rigid2f map_to_base_footprint = base_footprint_to_map.inverse();
+  Eigen::Vector2f point(state.marker_mu(id));
+  Eigen::Vector2f mu = map_to_base_footprint * point;
+  return mu;
+}
+
+Eigen::MatrixXf SlamMeasurementModel::ComputeJacobian(const State& state, 
+                                                      int id) {
+  float cos_theta = cos(state.angle());
+  float sin_theta = sin(state.angle());
+  float tx = state.translation()(0);
+  float ty = state.translation()(1);
+  float mx = state.marker_mu(id)(0);
+  float my = state.marker_mu(id)(1);
+  Eigen::Matrix<float, 2, 3> h1;
+  h1 << -cos_theta, -sin_theta, -sin_theta*(mx-tx) + cos_theta*(my-ty),
+        sin_theta,  -cos_theta, -cos_theta*(mx-tx) - sin_theta*(my-ty);
+  Eigen::Matrix2f h2;
+  h2 << cos_theta, sin_theta,
+        -sin_theta, cos_theta;
+  Eigen::MatrixXf H = Eigen::MatrixXf::Zero(2, state.dim());
+  H.block<2, 3>(0, 0) = h1;
+  H.block<2, 2>(0, 3+2*id) = h2;
+  return H;
+}

@@ -68,3 +68,15 @@ std::ostream& operator<<(std::ostream& os,
   }
   return os;
 }
+
+std::ostream& operator<<(std::ostream& os, const State& state) {
+  os << "mean: [" << state.mu().head(3).transpose() << "] covariance:\n" 
+     << state.sigma().block<3, 3>(0, 0);
+  return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const MarkerState& marker_state) {
+  os << "id: " << marker_state.id << " mean: [" << marker_state.mu.transpose()
+     << "] covariance:\n" << marker_state.sigma;
+  return os;
+}

@@ -77,16 +77,25 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(ekf_localization_node 
-  src/main.cc 
-  src/node.cc
-  src/ekf_localization.cc 
+add_library(ekf  
   src/marker_pose_estimator.cc 
   src/motion_model.cc
   src/common.cc
   src/measurement_model.cc
   src/odometry.cc
-  src/maps.cc)
+  src/maps.cc
+  src/ekf_localization.cc
+  src/ekf_slam.cc
+  src/node.cc
+)
+
+add_executable(ekf_localization_node 
+  src/localization_main.cc
+)
+
+add_executable(ekf_slam_node
+  src/slam_main.cc
+)
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
@@ -118,7 +127,12 @@ add_executable(ekf_localization_node
 #   ${catkin_LIBRARIES}
 # )
 
+target_link_libraries(ekf ${OpenCV_LIBS})
+
 target_link_libraries(ekf_localization_node
-  ${catkin_LIBRARIES} ${OpenCV_LIBS} ${YAML_CPP_LIBRARIES} gflags
+  ${catkin_LIBRARIES} ${YAML_CPP_LIBRARIES} gflags ekf
 )
 
+target_link_libraries(ekf_slam_node
+  ${catkin_LIBRARIES} ${YAML_CPP_LIBRARIES} gflags ekf
+)

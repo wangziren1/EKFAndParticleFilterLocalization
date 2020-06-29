@@ -1,5 +1,7 @@
 show_image: true
 
+marker_num: 20
+
 motion_model_covariance: [0.0001, 0, 0,
                           0, 0.0001, 0,
                           0, 0, 0.0001]
